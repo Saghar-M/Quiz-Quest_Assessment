@@ -1,6 +1,5 @@
 # function go here
 import random
-from unittest import result
 
 
 def yes_no(question):
@@ -26,28 +25,49 @@ def instructions():
 You will be asked simple math questions, 
 you will get feedback after each question. 
 please try to enter only numbers, and 
-at the emd if you want you can see your
+at the end if you want you can see your
 quiz history. 
     """)
 
 
 
-def int_check(question):
-    """cheks users enter an integer more than /equal to 1 """
-    error =  "Please enter an integer more than/equal to 1."
+# Checks users enter an int / float that is
+# more than a minimum (default minimum is zero)
+# Allows an 'exir' code
+def num_check(question, num_type=int, low=0, exit_code = "xxx"):
+
+    error = f"Please enter an integer that is more than {low}."
 
     while True:
+        # Ask user question and return response if
+        # exit code is entered
+        response = input(question)
+        if response == exit_code:
+            return response
+        # check response is more than minimum
         try:
-            response = int(input(question))
+            response = num_type(response)
 
-            if response <1:
-                print(error)
-            else:
+            if response > low:
                 return response
+            else:
+                print(error)
 
-
+                # Show error if response is invalid
         except ValueError:
             print(error)
+
+
+def not_blank(question):
+    while True:
+        # ask user the question
+        response = input(question)
+
+        # return their response if it is not blank
+        if response != "":
+            return response
+        else:
+            print("sorry - your response can't be blank")
 
 
 # Main routine starts here
@@ -59,47 +79,100 @@ want_instructions = yes_no("Do you want to see the instructions? ")
 if want_instructions == "yes":
     instructions()
 
+your_name = not_blank("What is your name?")
+print(f"Welcome to Math quiz {your_name}")
+
 print()
-question_numbers= int_check("How many questions do you want? ")
-print(question_numbers)
+question_numbers= num_check("How many questions do you want? ")
+if question_numbers == "xxx":
+    print("Have a good day")
+else:
+    print(question_numbers)
 
 
-# Initialise game variables
-score= 0
 
 
-# Looping starts here
-for item in range ( question_numbers):
-    num_one = random.randint(1, 100)
-    num_two = random.randint(1, 100)
-    operations = random.choice(["+", "-", "*"])
 
-    # Calculate the answers in here
-    if operations == "+":
-        correct_answer = num_one + num_two
-    elif operations == "-":
-        correct_answer = num_one - num_two
+    # Initialize game variables
+    score= 0
+    history = []
+    user_answer =  ""
+
+    # Looping starts here
+    for item in range (int(question_numbers)):
+        num_one = random.randint(1, 100)
+        num_two = random.randint(1, 100)
+        operations = random.choice(["+", "-", "*","/","Area","Perimeter"])
+
+        # Calculate the answers in here
+        if operations == "+":
+            correct_answer = num_one + num_two
+        elif operations == "-":
+            correct_answer = num_one - num_two
+        elif operations == "*":
+            correct_answer = num_one * num_two
+        elif operations == "/":
+            correct_answer = num_one // num_two
+        elif operations == "Area":
+            correct_answer = num_one * num_two
+            ask_question = f" Area of rectangle {num_one} x {num_two}  "
+        else:
+            correct_answer = 2 * (num_one + num_two)
+            ask_question = f" perimeter of rectangle {num_one} x {num_two}  "
+
+
+
+
+    # Get Valid answer from the user
+
+        while True:
+            try:
+                if operations == "Area":
+                    user_answer=int(input(f"{item+1}: Area of rectangle (length = {num_one} , width= {num_two})"))
+                elif operations == "Perimeter":
+                    user_answer= int(input(f"{item+1}: Perimeter of rectangle (length ={num_one} and width= {num_two})"))
+                else:
+                    user_answer = int(input(f"{item+1}: {num_one}  {operations} {num_two} "))
+                break
+            except ValueError:
+                print("Please enter a number! ")
+
+
+
+
+        # Check the answer of the user
+        if user_answer == correct_answer:
+            print("Correct!")
+            score +=1
+
+        else:
+            print (f"Incorrect! The answer was {correct_answer}.")
+
+        # Add results to game history
+        if operations== "Area":
+            quiz_history = f"{item+1}: Area of rectangle (length = {num_one} , width= {num_two}) = {user_answer}"
+        elif operations== "Perimeter":
+            quiz_history = f"{item+1}: Perimeter of rectangle (length ={num_one} and width= {num_two}) =  {user_answer}"
+        else:
+            quiz_history = f"{item+1}: {num_one}  {operations} {num_two}  = {user_answer}"
+        history.append(quiz_history)
+
+# Loop ends here
+    if question_numbers > 0:
+        percentage = (score / question_numbers) * 100
+        print(f"percentage: {percentage}%")
     else:
-        correct_answer = num_one * num_two
+        print("You have to enter numbers!")
 
 
 
-# Get Valid answer from the user
 
-    while True:
-        try:
-            user_answer = int(input(f"Question{item+1}: {num_one}  {operations} {num_two} "))
-            break
-        except ValueError:
-            print("Please enter a number! ")
+# Display the game history on request
+    see_history = yes_no("\nDo you want to see your game history? ")
+    if see_history == "yes":
+        for item in history:
+                print(item)
 
-    # Check the answer of the user
-    if user_answer == correct_answer:
-        print("Correct!")
-        score +=1
-
-    else:
-        print (f"Incorrect! The answer was {correct_answer}.")
 
 
 
