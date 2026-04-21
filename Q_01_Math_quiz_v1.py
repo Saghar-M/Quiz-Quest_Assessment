@@ -38,10 +38,13 @@ def num_check(question, num_type=int, low=1, high= 100, exit_code = "xxx"):
 
     error = f"Please enter an integer between {low} and {high}."
 
+
     while True:
         # Ask user question and return response if
         # exit code is entered
-        response = input(question)
+        response = input(question).lower()
+
+        # check for infinite mode / exit code
         if response == exit_code:
             return response
         # check response is more than minimum
@@ -67,12 +70,11 @@ def not_blank(question):
         response = input(question)
 
         # return their response if it is not blank
-        if response != "":
+        if response.isalpha():
             return response
-        elif response:
-            print("Please enter only letters")
+
         else:
-            print("sorry - your response can't be blank")
+            print("Sorry- Your response can't be blank or numbers")
 
 
 
