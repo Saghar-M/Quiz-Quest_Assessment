@@ -107,7 +107,7 @@ question_numbers = num_check("Rounds <enter for infinite:",
 
 if question_numbers == "":
     mode ="infinite"
-    rounds_played = 10
+    question_numbers = 10
 
 # ask user if they want to customise the number range
 default_params = yes_no("Do you want to use the default game parameters? ")
@@ -125,7 +125,7 @@ numbers_allowed = (low_num, high_num)
 
 # Game loop starts here
 
-while rounds_played < question_numbers:
+while rounds_played > question_numbers:
     print(f"{rounds_played +1}")
     rounds_played+=1
 
@@ -136,6 +136,14 @@ while rounds_played < question_numbers:
         rounds_heading = f"\n 💿💿💿 Round {rounds_played } of {rounds_played} 💿💿💿 "
 
     print(rounds_heading)
+
+    # Round starts here
+    # check that they don't want to quit
+    if user_answer == "xxx":
+        # set end_game to use that outer loop can be broken
+        end_game = "yes"
+        break
+
 
 
     # Looping starts here
@@ -193,15 +201,12 @@ while rounds_played < question_numbers:
             quiz_history = f"{item+1}: {num_one}  {operations} {num_two}  = {user_answer}"
         history.append(quiz_history)
 
-# Loop ends here
+    # Loop ends here
     if question_numbers > 0:
         percentage = (score / question_numbers) * 100
         print(f"percentage: {percentage:.1f}%")
     else:
         print("You have to enter numbers!")
-
-
-
 
 # Display the game history on request
     see_history = yes_no("\nDo you want to see your game history? ")
