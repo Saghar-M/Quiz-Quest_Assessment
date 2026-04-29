@@ -84,7 +84,10 @@ mode = "regular"
 score= 0
 history = []
 user_answer =  ""
+end_game = "no"
+
 rounds_played = 0
+feedback =""
 
 print("🔼🔼🔼 Welcome to the Math Quiz🔻🔻🔻")
 print()
@@ -104,8 +107,9 @@ if want_instructions == "yes":
 # Ask user for number of questions / infinite mode
 question_numbers = num_check("Rounds <enter for infinite:",
                        low=1, high=100, exit_code="")
+# checks if the user wants to quit
 
-if question_numbers == "":
+if question_numbers== "":
     mode ="infinite"
     question_numbers = 10
 
@@ -117,102 +121,100 @@ if default_params== "yes":
 
 # allow user to choose the high / low number
 else:
-    low_num = num_check("Low Number? ")
-    high_num = num_check("High Number? ", low=low_num+1)
+    low_num = num_check("Low Number? ", exit_code="xxx")
+    if low_num == "xxx":
+        end_game ="yes"
+        exit()
+    high_num = num_check("High Number? ", low=low_num+1, exit_code="xxx")
+    if high_num == "xxx":
+        end_game = "yes"
+        exit()
 
 # calculate the maximum number of guesses bsed on the low and high number
 numbers_allowed = (low_num, high_num)
 
 # Game loop starts here
 
-while rounds_played > question_numbers:
-    print(f"{rounds_played +1}")
+while rounds_played < question_numbers:
+
     rounds_played+=1
 
     # Rounds headings ( based on mode)
     if question_numbers == "infinite":
-        rounds_heading = f"\n 💿💿💿 Round {rounds_played +1} (infinite Mode) 💿💿💿 "
+        rounds_heading = f"\n 💿💿💿 Round {rounds_played} (infinite Mode) 💿💿💿 "
     else:
-        rounds_heading = f"\n 💿💿💿 Round {rounds_played } of {rounds_played} 💿💿💿 "
+        rounds_heading = f"\n 💿💿💿 Round {rounds_played } of {question_numbers} 💿💿💿 "
 
     print(rounds_heading)
 
-    # Round starts here
-    # check that they don't want to quit
-    if user_answer == "xxx":
-        # set end_game to use that outer loop can be broken
-        end_game = "yes"
-        break
-
-
-
     # Looping starts here
-    for item in range (int(question_numbers)):
-        num_one = random.randint(1, 100)
-        num_two = random.randint(1, 100)
-        operations = random.choice(["+", "-", "*","/","Area","Perimeter"])
 
-        # Calculate the user answers based in the operations
-        if operations == "+":
-            correct_answer = num_one + num_two
-        elif operations == "-":
-            correct_answer = num_one - num_two
-        elif operations == "*":
-            correct_answer = num_one * num_two
-        elif operations == "/":
-            correct_answer = num_one // num_two
-        elif operations == "Area":
-            correct_answer = num_one * num_two
-            ask_question = f" Area of rectangle {num_one} x {num_two}  "
-        else:
-            correct_answer = 2 * (num_one + num_two)
-            ask_question = f" perimeter of rectangle {num_one} x {num_two}  "
+    num_one = random.randint(low_num, high_num)
+    num_two = random.randint(low_num, high_num)
+    operations = random.choice(["+", "-", "*","Area","Perimeter"])
+
+    # Calculate the user answers based in the operations
+    if operations == "+":
+        correct_answer = num_one + num_two
+    elif operations == "-":
+        correct_answer = num_one - num_two
+    elif operations == "*":
+        correct_answer = num_one * num_two
+    elif operations == "Area":
+        correct_answer = num_one * num_two
+        ask_question = f" Area of rectangle {num_one} x {num_two}  "
+    else:
+        correct_answer = 2 * (num_one + num_two)
+        ask_question = f" perimeter of rectangle {num_one} x {num_two}  "
 
 
     # Get Valid answer from the user
 
-        while True:
-            try:
-                if operations == "Area":
-                    user_answer=int(input(f"{item+1}: Area of rectangle (height = {num_one} , width= {num_two}) " ))
-                elif operations == "Perimeter":
-                    user_answer= int(input(f"{item+1}: Perimeter of rectangle (height ={num_one} and width= {num_two}) " ))
-                else:
-                    user_answer = int(input(f"{item+1}: {num_one}  {operations} {num_two} "))
-                break
-            except ValueError:
-                print("Please enter a number! ")
+    while True:
+        try:
+            if operations == "Area":
+                user_answer=int(input(f" Round {rounds_played}: Area of rectangle (height = {num_one} , width= {num_two}) " ))
+            elif operations == "Perimeter":
+                user_answer= int(input(f" Round {rounds_played}: Perimeter of rectangle (height ={num_one} and width= {num_two}) " ))
+            else:
+                user_answer = int(input(f"Round {rounds_played}: {num_one}  {operations} {num_two} "))
+            break
+        except ValueError:
+            print("Please enter a number! ")
 
 
-        # Check the answer of the user
-        if user_answer == correct_answer:
-            print("Correct!")
-            score +=1
-
-        else:
-            print (f"Incorrect! The answer was {correct_answer}.")
-
-        # Add results to game history
-        if operations== "Area":
-            quiz_history = f"{item+1}: Area of rectangle (height = {num_one} , width= {num_two}) = {user_answer} "
-        elif operations== "Perimeter":
-            quiz_history = f"{item+1}: Perimeter of rectangle (height ={num_one} and width= {num_two}) =  {user_answer} "
-        else:
-            quiz_history = f"{item+1}: {num_one}  {operations} {num_two}  = {user_answer}"
-        history.append(quiz_history)
-
-    # Loop ends here
-    if question_numbers > 0:
-        percentage = (score / question_numbers) * 100
-        print(f"percentage: {percentage:.1f}%")
+    # Check the answer and output the history
+    if user_answer == correct_answer:
+        print("✅✅✅ Correct! ✅✅✅")
+        score+=1
+        feedback = "Correct"
     else:
-        print("You have to enter numbers!")
+        print(f" ❌❌❌ Incorrect! ❌❌❌ The answer was {correct_answer}.")
+        feedback = f" Incorrect "
+
+    # Save the answers for history
+    if operations == "Area":
+        quiz_history = f"Round {rounds_played}: Area of rectangle (height = {num_one} , width= {num_two}) = {user_answer} "
+    elif operations == "Perimeter":
+        quiz_history = f"Round {rounds_played}: Perimeter of rectangle (height ={num_one} and width= {num_two}) =  {user_answer} "
+    else:
+        quiz_history = f"Round {rounds_played}: {num_one}  {operations} {num_two}  = {user_answer}"
+    history.append(quiz_history)
+
+
+
+# Loop ends here
+if question_numbers > 0:
+    percentage = (score / rounds_played) * 100
+    print(f"percentage: {percentage:.1f}%")
+else:
+    print("You have to enter numbers!")
 
 # Display the game history on request
-    see_history = yes_no("\nDo you want to see your game history? ")
-    if see_history == "yes":
-        for item in history:
-                print(item)
+see_history = yes_no("\nDo you want to see your game history? ")
+if see_history == "yes":
+    for item in history:
+            print(rounds_played)
 
 
 
