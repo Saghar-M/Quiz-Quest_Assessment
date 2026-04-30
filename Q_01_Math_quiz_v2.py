@@ -34,7 +34,7 @@ quiz history.
 # Checks users enter an int / float that is
 # more than a minimum (default minimum is zero)
 # Allows an 'exir' code
-def num_check(question, num_type=int, low=1, high= 100, exit_code = "xxx"):
+def num_check(question, num_type=int, low=None, high= None, exit_code = None):
 
     error = f"Please enter an integer between {low} and {high}."
 
@@ -49,12 +49,16 @@ def num_check(question, num_type=int, low=1, high= 100, exit_code = "xxx"):
             return response
         # check response is more than minimum
         try:
-            response = num_type(response)
+            response = int(response)
 
-            if response < low:
-                print(f"Too low {error}")
-            elif response > high:
-                print(f"Too high{error}")
+            # check that the integer is not too low...
+            if low is not None and response < low:
+                print(error)
+
+            # check response is more than the low number
+            elif high is not None and response > high:
+                print(error)
+            # if response is valid, return it
             else:
                 return response
 
@@ -80,6 +84,7 @@ def not_blank(question):
 
 # Main routine starts here
 # Initialize game variables
+
 mode = "regular"
 score= 0
 history = []
@@ -108,7 +113,9 @@ if want_instructions == "yes":
 question_numbers = num_check("Rounds <enter for infinite:",
                        low=1, high=100, exit_code="")
 # checks if the user wants to quit
-
+if question_numbers == "xxx":
+    print("Thanks for playing!")
+    exit()
 if question_numbers== "":
     mode ="infinite"
     question_numbers = 10
@@ -140,7 +147,7 @@ while rounds_played < question_numbers:
     rounds_played+=1
 
     # Rounds headings ( based on mode)
-    if question_numbers == "infinite":
+    if mode== "infinite":
         rounds_heading = f"\n 💿💿💿 Round {rounds_played} (infinite Mode) 💿💿💿 "
     else:
         rounds_heading = f"\n 💿💿💿 Round {rounds_played } of {question_numbers} 💿💿💿 "
@@ -167,21 +174,26 @@ while rounds_played < question_numbers:
         correct_answer = 2 * (num_one + num_two)
         ask_question = f" perimeter of rectangle {num_one} x {num_two}  "
 
+    if user_answer == "xxx":
+        end_game = "yes"
+        break
 
-    # Get Valid answer from the user
 
-    while True:
-        try:
-            if operations == "Area":
-                user_answer=int(input(f" Round {rounds_played}: Area of rectangle (height = {num_one} , width= {num_two}) " ))
-            elif operations == "Perimeter":
-                user_answer= int(input(f" Round {rounds_played}: Perimeter of rectangle (height ={num_one} and width= {num_two}) " ))
-            else:
-                user_answer = int(input(f"Round {rounds_played}: {num_one}  {operations} {num_two} "))
+    if operations == "Area":
+        question_text = ask_question
+    elif operations == "Perimeter":
+        question_text = ask_question
+    else:
+        question_text = f"{num_one} {operations} {num_two}"
+
+    # checks for xxx
+    user_answer = num_check(f"Round {rounds_played}: {question_text} = ", exit_code="xxx")
+
+    # 3. If they want to quit, break the loop
+    if user_answer == "xxx":
+            end_game = "yes"
+            rounds_played -= 1
             break
-        except ValueError:
-            print("Please enter a number! ")
-
 
     # Check the answer and output the history
     if user_answer == correct_answer:
@@ -201,22 +213,25 @@ while rounds_played < question_numbers:
         quiz_history = f"Round {rounds_played}: {num_one}  {operations} {num_two}  = {user_answer}"
     history.append(quiz_history)
 
+#if users are in infinite mode, increase number of rounds!
+if mode == "infinite":
+    question_numbers += 1
+
 
 
 # Loop ends here
-if question_numbers > 0:
+if rounds_played > 0:
     percentage = (score / rounds_played) * 100
     print(f"percentage: {percentage:.1f}%")
+
+    # Display the game history on request
+    see_history = yes_no("\nDo you want to see your game history? ")
+    if see_history == "yes":
+        for item in history:
+                print(item)
+
 else:
-    print("You have to enter numbers!")
-
-# Display the game history on request
-see_history = yes_no("\nDo you want to see your game history? ")
-if see_history == "yes":
-    for item in history:
-            print(rounds_played)
-
-
+    print("🐔🐔🐔 Opps you chickened out!🐔🐔🐔 ")
 
 
 
