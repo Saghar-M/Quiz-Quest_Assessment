@@ -34,9 +34,21 @@ quiz history.
 # Checks users enter an int / float that is
 # more than a minimum (default minimum is zero)
 # Allows an 'exir' code
-def num_check(question, num_type=int, low=None, high= None, exit_code = None):
+def num_check(question, low=None, high= None, exit_code = None):
+    # if any integer is allowed...
 
-    error = f"Please enter an integer between {low} and {high}."
+    if low is None and high is None:
+        error = f"Please enter an integer"
+
+        # if the number needs to be more than an
+        # integer (ie: rounds / 'high number')
+    elif low is not None and high is None:
+        error = (f"Please enter an integer that is"
+                 f"more than / equal to {low}")
+    # if the number needs to between low and high
+    else:
+        error = (f"Please enter an integer that"
+                 f"is between {low} and {high} (inclusive)")
 
 
     while True:
@@ -169,10 +181,10 @@ while rounds_played < question_numbers:
         correct_answer = num_one * num_two
     elif operations == "Area":
         correct_answer = num_one * num_two
-        ask_question = f" Area of rectangle {num_one} x {num_two}  "
+        ask_question = f" Area of rectangle (height= {num_one} , width= {num_two}) "
     else:
         correct_answer = 2 * (num_one + num_two)
-        ask_question = f" perimeter of rectangle {num_one} x {num_two}  "
+        ask_question = f" perimeter of rectangle (height= {num_one} ,width= {num_two}) "
 
     if user_answer == "xxx":
         end_game = "yes"
