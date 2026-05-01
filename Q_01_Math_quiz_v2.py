@@ -1,5 +1,6 @@
 # function go here
 import random
+from urllib import error
 
 
 def yes_no(question):
@@ -29,27 +30,24 @@ at the end if you want you can see your
 quiz history. 
     """)
 
-
-
 # Checks users enter an int / float that is
 # more than a minimum (default minimum is zero)
-# Allows an 'exir' code
-def num_check(question, low=None, high= None, exit_code = None):
+# Allows an 'exit' code
+def num_check(question, low=None, high=None, exit_code=None):
     # if any integer is allowed...
 
     if low is None and high is None:
         error = f"Please enter an integer"
 
-        # if the number needs to be more than an
-        # integer (ie: rounds / 'high number')
+        # if the number needs to be more than an integer
     elif low is not None and high is None:
         error = (f"Please enter an integer that is"
-                 f"more than / equal to {low}")
-    # if the number needs to between low and high
+                f"more than / equal to {low}")
+
+        # if the number needs to between low and high
     else:
         error = (f"Please enter an integer that"
-                 f"is between {low} and {high} (inclusive)")
-
+                 f"between {low} and {high} (inclusive)")
 
     while True:
         # Ask user question and return response if
@@ -166,6 +164,7 @@ while rounds_played < question_numbers:
 
     print(rounds_heading)
 
+
     # Looping starts here
 
     num_one = random.randint(low_num, high_num)
@@ -184,7 +183,7 @@ while rounds_played < question_numbers:
         ask_question = f" Area of rectangle (height= {num_one} , width= {num_two}) "
     else:
         correct_answer = 2 * (num_one + num_two)
-        ask_question = f" perimeter of rectangle (height= {num_one} ,width= {num_two}) "
+        ask_question = f" perimeter of rectangle (height ={num_one} , width= {num_two}) "
 
     if user_answer == "xxx":
         end_game = "yes"
@@ -244,6 +243,7 @@ if rounds_played > 0:
 
 else:
     print("🐔🐔🐔 Opps you chickened out!🐔🐔🐔 ")
+
 
 
 
