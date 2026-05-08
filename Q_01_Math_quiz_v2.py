@@ -1,8 +1,8 @@
 # function go here
 import random
-from urllib import error
 
 
+# checks users enter yes (y) or no (n)
 def yes_no(question):
     """checks user response to a question is yes / no (y/n), returns 'yes' or 'no' """
 
@@ -17,7 +17,7 @@ def yes_no(question):
         else:
             print("please enter yes / no")
 
-
+# generates the instruction
 def instructions():
     """Prints instructions"""
 
@@ -44,7 +44,7 @@ def num_check(question, low=None, high=None, exit_code=None):
         error = (f"Please enter an integer that is"
                 f"more than / equal to {low}")
 
-        # if the number needs to between low and high
+        # if the number needs to be between low and high
     else:
         error = (f"Please enter an integer that"
                  f"between {low} and {high} (inclusive)")
@@ -76,7 +76,7 @@ def num_check(question, low=None, high=None, exit_code=None):
         except ValueError:
             print(error)
 
-
+# checks that the user response is not  blank
 def not_blank(question):
     """ Make sure that the input is not empty """
     while True:
@@ -93,14 +93,13 @@ def not_blank(question):
 
 
 # Main routine starts here
-# Initialize game variables
+# Initialize quiz variables
 
 mode = "regular"
 score= 0
 history = []
 user_answer =  ""
-end_game = "no"
-
+finish_quiz = "no"
 rounds_played = 0
 feedback =""
 
@@ -126,12 +125,13 @@ question_numbers = num_check("Rounds <enter for infinite:",
 if question_numbers == "xxx":
     print("Thanks for playing!")
     exit()
+# press enter for infinite mode
 if question_numbers== "":
     mode ="infinite"
     question_numbers = 10
 
 # ask user if they want to customise the number range
-default_params = yes_no("Do you want to use the default game parameters? ")
+default_params = yes_no("Do you want to use the default quiz parameters? ")
 if default_params== "yes":
     low_num= 0
     high_num = 100
@@ -140,17 +140,17 @@ if default_params== "yes":
 else:
     low_num = num_check("Low Number? ", exit_code="xxx")
     if low_num == "xxx":
-        end_game ="yes"
+        finish_quiz ="yes"
         exit()
     high_num = num_check("High Number? ", low=low_num+1, exit_code="xxx")
     if high_num == "xxx":
-        end_game = "yes"
+        finish_quiz = "yes"
         exit()
 
 # calculate the maximum number of guesses bsed on the low and high number
 numbers_allowed = (low_num, high_num)
 
-# Game loop starts here
+# Quiz loop starts here
 
 while rounds_played < question_numbers:
 
@@ -166,30 +166,40 @@ while rounds_played < question_numbers:
 
 
     # Looping starts here
-
+    # Choose number between high and low ( two integers)
     num_one = random.randint(low_num, high_num)
     num_two = random.randint(low_num, high_num)
+    # The operations that will be displayed for the users
     operations = random.choice(["+", "-", "*","Area","Perimeter"])
 
     # Calculate the user answers based in the operations
+
+    # calculates the answer for Addition
     if operations == "+":
         correct_answer = num_one + num_two
+    # calculate the answer for Subtraction
     elif operations == "-":
         correct_answer = num_one - num_two
+    # Calculate the answer for Multiplication
     elif operations == "*":
         correct_answer = num_one * num_two
+    # Calculates the answer for Area ( Rectangle)
     elif operations == "Area":
         correct_answer = num_one * num_two
         ask_question = f" Area of rectangle (height= {num_one} , width= {num_two}) "
     else:
+        # Calculate the answer for Perimeter ( Rectangle)
         correct_answer = 2 * (num_one + num_two)
         ask_question = f" perimeter of rectangle (height ={num_one} , width= {num_two}) "
 
+    # Quiz finishes if the user wants to quit early
     if user_answer == "xxx":
-        end_game = "yes"
+        finish_quiz = "yes"
         break
 
-
+    # Chooses the right operation
+    # for Area and perimeter and displays the question as sentences
+    # and for others it displays the question as simple like its symbols
     if operations == "Area":
         question_text = ask_question
     elif operations == "Perimeter":
@@ -202,26 +212,29 @@ while rounds_played < question_numbers:
 
     # 3. If they want to quit, break the loop
     if user_answer == "xxx":
-            end_game = "yes"
+            finish_quiz = "yes"
             rounds_played -= 1
             break
 
     # Check the answer and output the history
+
+    # if the user answer is correct,it displays correct
     if user_answer == correct_answer:
         print("✅✅✅ Correct! ✅✅✅")
         score+=1
         feedback = "Correct"
     else:
+        # if the user answer is wrong, it displays wrong and gives the right answer
         print(f" ❌❌❌ Incorrect! ❌❌❌ The answer was {correct_answer}.")
         feedback = f" Incorrect "
 
     # Save the answers for history
     if operations == "Area":
-        quiz_history = f"Round {rounds_played}: Area of rectangle (height = {num_one} , width= {num_two}) = {user_answer} "
+        quiz_history = f"Round {rounds_played}: Area of rectangle (height = {num_one} , width= {num_two}) = {user_answer} | Your answer was {feedback} ."
     elif operations == "Perimeter":
-        quiz_history = f"Round {rounds_played}: Perimeter of rectangle (height ={num_one} and width= {num_two}) =  {user_answer} "
+        quiz_history = f"Round {rounds_played}: Perimeter of rectangle (height ={num_one} and width= {num_two}) =  {user_answer} | Your answer was {feedback} . "
     else:
-        quiz_history = f"Round {rounds_played}: {num_one}  {operations} {num_two}  = {user_answer}"
+        quiz_history = f"Round {rounds_played}: {num_one}  {operations} {num_two}  = {user_answer} | Your answer was {feedback} ."
     history.append(quiz_history)
 
 #if users are in infinite mode, increase number of rounds!
@@ -229,14 +242,15 @@ if mode == "infinite":
     question_numbers += 1
 
 
-
 # Loop ends here
+# output the percentage
 if rounds_played > 0:
     percentage = (score / rounds_played) * 100
+    print("\n % Percentage %")
     print(f"percentage: {percentage:.1f}%")
 
-    # Display the game history on request
-    see_history = yes_no("\nDo you want to see your game history? ")
+    # Display the quiz history on request
+    see_history = yes_no("\nDo you want to see your quiz history? ")
     if see_history == "yes":
         for item in history:
                 print(item)
