@@ -170,7 +170,7 @@ while rounds_played < question_numbers:
     num_one = random.randint(low_num, high_num)
     num_two = random.randint(low_num, high_num)
     # The operations that will be displayed for the users
-    operations = random.choice(["+", "-", "*","Area","Perimeter"])
+    operations = random.choice(["+", "-", "*","/","Area","Perimeter"])
 
     # Calculate the user answers based in the operations
 
@@ -187,6 +187,13 @@ while rounds_played < question_numbers:
     elif operations == "Area":
         correct_answer = num_one * num_two
         ask_question = f" Area of rectangle (height= {num_one} , width= {num_two}) "
+        # Calculates the answer for Division
+    elif operations == "/":
+       correct_answer=num_one
+       num_one=eval(f"{num_one} * {num_two}")
+
+
+
     else:
         # Calculate the answer for Perimeter ( Rectangle)
         correct_answer = 2 * (num_one + num_two)
